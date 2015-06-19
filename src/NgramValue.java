@@ -38,6 +38,10 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		this.nDec = nDec;
 	}
 	
+	public void set(NgramValue n){
+		set(n.getWords().toString(), n.getFirst().get(), n.getCount().get(), n.getNDec().get());
+	}
+	
 	public void setNotFirst(){
 		first.set(false);
 	}

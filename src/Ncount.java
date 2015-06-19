@@ -8,6 +8,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.Reducer.Context;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.io.LongWritable;
@@ -36,36 +37,44 @@ public class Ncount {
 	}
  
 	public static class ReduceClass extends Reducer<Ngram,NgramValue,Text,IntWritable> {
-		private Text wordOut = new Text();
+		private Text wordOut = new Text(); 
 		@Override
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
-			/*
-			int sum = 0;
-			for (IntWritable value : values) {
-				sum += value.get();
-			}
-			context.write(key, new IntWritable(sum));
-			*/
+	
+			
+			NgramValue previous = new NgramValue();
+			int count = 0;
 			int nDec = 0;
 			String decade = key.getDecade().toString() + "\t";
 			for (NgramValue value : values) {
 				if (value.isFirst())
 					nDec += value.getCount().get();
 				else{
-					wordOut.set(decade + value.getWords() + "\t"+ nDec);
-					context.write(wordOut, value.getCount());
+					if (!value.equals(previous) && count !=0){
+						previous.setCount(count);
+						wordOut.set(decade + previous.getWords() + "\t"+ nDec);
+						context.write(wordOut, previous.getCount());
+						count = 0;
+					}
+					count += value.getCount().get();
+					previous.set(value);
+					
+					
 				}
 			}
+			previous.setCount(count);
+			wordOut.set(decade + previous.getWords() + "\t"+ nDec);
+			context.write(wordOut, previous.getCount());
 	    }
 	}
 	
+	
 	public static class NgramCombiner extends Reducer<Ngram,NgramValue,Ngram,NgramValue> {
-		private NgramValue previous = new NgramValue();
 		
 		@Override
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
 			int count = 0;
-			
+			NgramValue previous = new NgramValue();
 			for (NgramValue value : values) {
 				if (!value.equals(previous) && count !=0){
 					previous.setCount(count);
@@ -73,7 +82,7 @@ public class Ncount {
 					count = 0;
 				}
 				count += value.getCount().get();
-				previous = value;
+				previous.set(value);
 			}
 			previous.setCount(count);
 			context.write(key, previous);
