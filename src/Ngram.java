@@ -45,6 +45,10 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 		first.set(false);
 	}
 	
+	public void setFirst(){
+		first.set(true);
+	}
+	
 	public void w2First(){
 		w1First.set(false);
 	}

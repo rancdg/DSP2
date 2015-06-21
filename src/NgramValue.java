@@ -19,9 +19,13 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 	public NgramValue(){
 		set(new Text(""), new BooleanWritable(false), new IntWritable(0), new IntWritable(0));
 	}
-	
+
 	public NgramValue(String words, boolean first, int count, int nDec){
 		set(new Text(words), new BooleanWritable(first), new IntWritable(count), new IntWritable(nDec));
+	}
+	
+	public NgramValue(NgramValue n){
+		set(new Text(n.getWords().toString()), new BooleanWritable(n.getFirst().get()), new IntWritable(n.getCount().get()), new IntWritable(n.getNDec().get()));
 	}
 	
 	public void set(String words, boolean first, int count, int nDec){
@@ -38,6 +42,7 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		this.nDec = nDec;
 	}
 	
+	
 	public void set(NgramValue n){
 		set(n.getWords().toString(), n.getFirst().get(), n.getCount().get(), n.getNDec().get());
 	}
@@ -46,6 +51,15 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		first.set(false);
 	}
 	
+	public void setFirst(){
+		first.set(true);
+	}
+	
+	
+	
+	public void setNdec(int nDec){
+		this.nDec.set(nDec);
+	}
 	
 	public Text getWords(){
 		return words;
@@ -87,7 +101,7 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		count.readFields(in);
 		nDec.readFields(in);
 	}
-
+	
 	@Override
 	public int compareTo(NgramValue o) {
 		return words.compareTo(o.getWords());
