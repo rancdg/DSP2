@@ -1,3 +1,4 @@
+package Job1;
 import java.io.IOException;
 
 import org.apache.hadoop.io.IntWritable;
@@ -6,14 +7,17 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 
+import NgramGeneral.Ngram;
+import NgramGeneral.NgramValue;
+
 
 
 
 public class DecadeCount {
 	
 	public static class MapClass extends Mapper<LongWritable, Text, Ngram, NgramValue> {
-		private Ngram ngram;
-		private NgramValue ngramValue;
+		private Ngram ngram = new Ngram();
+		private NgramValue ngramValue = new NgramValue();
 	    
 	    
 	    @Override
@@ -21,13 +25,13 @@ public class DecadeCount {
 	    	String[] data = value.toString().split("\\t");
 	    	String[] words = data[0].split(" ");
 	    	
-	    	ngramValue = new NgramValue(words[0]+ " " + words[1], true, Integer.parseInt(data[2]) ,0);
+	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]) ,0);
 	    	int year = Integer.parseInt(data[1]);
 	    	year -= (year % 10);
-	    	ngram = new Ngram(year, words[0], words[1], true);
+	    	ngram.set(year, words[0], words[1], true);
 	    	context.write(ngram, ngramValue); 
-	    	ngram = new Ngram(year, words[0], words[1], false);
-	    	ngramValue = new NgramValue(words[0]+ " " + words[1], false, Integer.parseInt(data[2]) ,0);
+	    	ngram.setNotFirst();
+	    	ngramValue.setNotFirst();
 	    	context.write(ngram, ngramValue); 
 	    	
 	    }

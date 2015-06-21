@@ -1,5 +1,8 @@
+package Job1;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
+
+import NgramGeneral.Ngram;
 
 public class NgramGroupingComparator extends WritableComparator {
 	    public NgramGroupingComparator() {

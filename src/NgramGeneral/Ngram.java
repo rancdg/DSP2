@@ -1,3 +1,5 @@
+package NgramGeneral;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -92,30 +94,17 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 
 	@Override
 	public int compareTo(Ngram o) {
-		//first, sort by decades
-		int result = decade.compareTo(o.getDecade());
-		//second, sort by the special token first, which is designed for counting
-		if (result == 0)
-			result = -first.compareTo(o.getFirst());
-		
-		//third, sort by w1,w2 if flag w1First is on, or w2,w1 if off
-		if (result == 0){
-			if(w1First.get())
-				result = w1.compareTo(o.getW1());
-			else
-				result = w2.compareTo(o.getW2());
-			
-			if (result == 0){
-				if(w1First.get())
-					result = w2.compareTo(o.getW2());
-				else
-					result = w1.compareTo(o.getW1());
-				
-			}
-		}
-		return result;
+		int res = decade.compareTo(o.getDecade());
+		if (res ==0)
+			res = w1.compareTo(o.getW1());
+		if (res ==0)
+			res = w2.compareTo(o.getW2());
+		if (res ==0)
+			res = -first.compareTo(o.getFirst());
+		return res;
 	}
 
+	
 	
 	
 }

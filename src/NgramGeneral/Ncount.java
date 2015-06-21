@@ -1,13 +1,12 @@
+package NgramGeneral;
 
 
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
-
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
@@ -15,6 +14,13 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+
+import Job1.DecadeCount;
+import Job1.NgramGroupingComparator;
+import Job1.NgramPartitioner;
+import Job2.FirstWordComparator;
+import Job2.FirstWordCount;
+import Job2.FirstWordGroupingComparator;
 
  
 public class Ncount extends Configured implements Tool  { 
@@ -26,7 +32,7 @@ public class Ncount extends Configured implements Tool  {
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
 	    conf.set("mapred.map.tasks","10");
-	    conf.set("mapred.reduce.tasks","2");
+	    conf.set("mapred.reduce.tasks","10");
 	    
 	    final String inter = "/inter";
 	    
@@ -50,8 +56,8 @@ public class Ncount extends Configured implements Tool  {
 	    System.out.println("JOB 1 completed");
 	
 	    Configuration conf2 = new Configuration();
-	    //conf2.set("mapreduce.job.maps","10");
-        //conf2.set("mapreduce.job.reduces","10");
+	    conf2.set("mapreduce.job.maps","10");
+        conf2.set("mapreduce.job.reduces","10");
 	    
 		Job job2 = Job.getInstance(conf2, "First word count");
 		job2.setJarByClass(Ncount.class);

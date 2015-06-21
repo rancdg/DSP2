@@ -1,8 +1,12 @@
+package Job2;
 
 
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Partitioner;
+
+import NgramGeneral.Ngram;
+import NgramGeneral.NgramValue;
 
 	public class FirstWordPartitioner extends Partitioner<Ngram, NgramValue>{
 	    @Override
