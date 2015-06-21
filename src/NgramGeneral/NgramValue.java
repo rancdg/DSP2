@@ -17,38 +17,46 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 	private BooleanWritable first;
 	private IntWritable count;
 	private IntWritable nDec;
+	private IntWritable cW1;
 	
 	public NgramValue(){
-		set(new Text(""), new BooleanWritable(false), new IntWritable(0), new IntWritable(0));
+		set(new Text(""), new BooleanWritable(false), new IntWritable(0), new IntWritable(0), new IntWritable(0));
 	}
 
 	public NgramValue(String words, boolean first, int count, int nDec){
-		set(new Text(words), new BooleanWritable(first), new IntWritable(count), new IntWritable(nDec));
+		set(new Text(words), new BooleanWritable(first), new IntWritable(count), new IntWritable(nDec), new IntWritable(0));
 	}
 	
 	public NgramValue(NgramValue n){
-		set(new Text(n.getWords().toString()), new BooleanWritable(n.getFirst().get()), new IntWritable(n.getCount().get()), new IntWritable(n.getNDec().get()));
+		set(new Text(n.getWords().toString()), new BooleanWritable(n.getFirst().get()), new IntWritable(n.getCount().get()), new IntWritable(n.getNDec().get()), new IntWritable(n.getCW1().get()));
 	}
 	
-	public void set(String words, boolean first, int count, int nDec){
+	public void set(String words, boolean first, int count, int nDec, int cW1){
 		this.words.set(words);
 		this.first.set(first);
 		this.count.set(count);
 		this.nDec.set(nDec);
+		this.cW1.set(cW1);
 	}
 	
-	public void set(Text words, BooleanWritable first, IntWritable count, IntWritable nDec){
+	public void set(Text words, BooleanWritable first, IntWritable count, IntWritable nDec, IntWritable cW1){
 		this.words = words;
 		this.first = first;
 		this.count = count;
 		this.nDec = nDec;
+		this.cW1 = cW1;
 	}
 	
 	
 	public void set(NgramValue n){
-		set(n.getWords().toString(), n.getFirst().get(), n.getCount().get(), n.getNDec().get());
+		set(n.getWords().toString(), n.getFirst().get(), n.getCount().get(), n.getNDec().get(), n.getCW1().get());
 	}
 	
+	//debug setter
+	public void setWords(String words){
+		this.words.set(words);
+	}
+
 	public void setNotFirst(){
 		first.set(false);
 	}
@@ -57,7 +65,11 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		first.set(true);
 	}
 	
+	public void setCW1(int cW1){
+		this.cW1.set(cW1);
+	}
 	
+
 	
 	public void setNdec(int nDec){
 		this.nDec.set(nDec);
@@ -74,6 +86,11 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 	public boolean isFirst(){
 		return first.get();
 	}
+	
+	public IntWritable getCW1(){
+		return cW1;
+	}
+	
 	
 	public BooleanWritable getFirst(){
 		return first;
@@ -93,6 +110,7 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		first.write(out);
 		count.write(out);
 		nDec.write(out);
+		cW1.write(out);
 	
 	}
 
@@ -102,6 +120,7 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		first.readFields(in);
 		count.readFields(in);
 		nDec.readFields(in);
+		cW1.readFields(in);
 	}
 	
 	@Override
@@ -114,6 +133,8 @@ public class NgramValue implements Writable, WritableComparable<NgramValue> {
 		NgramValue o = (NgramValue)obj;
 		return (words.equals(o.getWords()) && (first.equals(o.getFirst())));
 	}
+
+
 	
 
 	

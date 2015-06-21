@@ -30,7 +30,7 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 	public void set(int decade, String w1, String w2, boolean first){
 		this.decade.set(decade);
 		this.w1.set(w1);
-		this.w1.set(w2);
+		this.w2.set(w2);
 		this.first.set(first);
 		this.w1First = new BooleanWritable(true);
 	}
@@ -95,12 +95,14 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 	@Override
 	public int compareTo(Ngram o) {
 		int res = decade.compareTo(o.getDecade());
+		
+		if (res ==0)
+			res = -first.compareTo(o.getFirst());
+		
 		if (res ==0)
 			res = w1.compareTo(o.getW1());
 		if (res ==0)
 			res = w2.compareTo(o.getW2());
-		if (res ==0)
-			res = -first.compareTo(o.getFirst());
 		return res;
 	}
 

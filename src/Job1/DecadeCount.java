@@ -25,7 +25,7 @@ public class DecadeCount {
 	    	String[] data = value.toString().split("\\t");
 	    	String[] words = data[0].split(" ");
 	    	
-	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]) ,0);
+	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0);
 	    	int year = Integer.parseInt(data[1]);
 	    	year -= (year % 10);
 	    	ngram.set(year, words[0], words[1], true);
@@ -104,6 +104,7 @@ public class DecadeCount {
 			context.write(keyToSend, previous);
 	    }
 	}
+	
 	
 	public static class NgramCombiner extends Reducer<Ngram,NgramValue,Ngram,NgramValue> {
 		private Ngram keyToSend;

@@ -5,6 +5,7 @@ package NgramGeneral;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
@@ -31,10 +32,11 @@ public class Ncount extends Configured implements Tool  {
 	@Override
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-	    conf.set("mapred.map.tasks","10");
-	    conf.set("mapred.reduce.tasks","10");
+	    //conf.set("mapred.map.tasks","10");
+	    //conf.set("mapred.reduce.tasks","10");
 	    
 	    final String inter = "/inter";
+	    final String inter2 = "/inter2";
 	    
 	    Job job1 = Job.getInstance(conf, "Decade count");
 	    job1.setJarByClass(Ncount.class);
@@ -45,6 +47,7 @@ public class Ncount extends Configured implements Tool  {
 	    job1.setGroupingComparatorClass(NgramGroupingComparator.class);
 	    job1.setMapOutputKeyClass(Ngram.class);
 	    job1.setMapOutputValueClass(NgramValue.class);
+
 	    job1.setOutputKeyClass(Ngram.class);
 	    job1.setOutputValueClass(NgramValue.class);
 	    job1.setOutputFormatClass(SequenceFileOutputFormat.class);
@@ -56,8 +59,8 @@ public class Ncount extends Configured implements Tool  {
 	    System.out.println("JOB 1 completed");
 	
 	    Configuration conf2 = new Configuration();
-	    conf2.set("mapreduce.job.maps","10");
-        conf2.set("mapreduce.job.reduces","10");
+	    //conf2.set("mapreduce.job.maps","10");
+        //conf2.set("mapreduce.job.reduces","10");
 	    
 		Job job2 = Job.getInstance(conf2, "First word count");
 		job2.setJarByClass(Ncount.class);
@@ -70,17 +73,38 @@ public class Ncount extends Configured implements Tool  {
 	    job2.setMapOutputKeyClass(Ngram.class);
 	    job2.setMapOutputValueClass(NgramValue.class);
 		// Set the outputs
-		job2.setOutputKeyClass(Text.class);
-		job2.setOutputValueClass(IntWritable.class);
-	    
+		job2.setOutputKeyClass(Ngram.class);
+		job2.setOutputValueClass(NgramValue.class);
 		job2.setInputFormatClass(SequenceFileInputFormat.class);
-		
-		
+		job2.setOutputFormatClass(SequenceFileOutputFormat.class);
 		FileInputFormat.addInputPath(job2, new Path(inter));
-	    
-		FileOutputFormat.setOutputPath(job2, new Path(args[1]));
+		FileOutputFormat.setOutputPath(job2, new Path(inter2));
 		
 		job2.waitForCompletion(true);
+		
+		Configuration conf3 = new Configuration();
+	    //conf3.set("mapreduce.job.maps","10");
+        //conf3.set("mapreduce.job.reduces","10");
+	    
+		Job job3 = Job.getInstance(conf3, "Pmi");
+		job3.setJarByClass(Ncount.class);
+	    job3.setMapperClass(Job3.Pmi.MapClass.class);
+	    job3.setReducerClass(Job3.Pmi.ReduceClass.class);
+	    
+		job3.setPartitionerClass(NgramPartitioner.class);
+		job3.setSortComparatorClass(Job3.SecondWordComparator.class);
+		job3.setGroupingComparatorClass(Job3.SecondWordGroupingComparator.class);
+	    job3.setMapOutputKeyClass(Ngram.class);
+	    job3.setMapOutputValueClass(NgramValue.class);
+		// Set the outputs
+		job3.setOutputKeyClass(Text.class);
+		job3.setOutputValueClass(DoubleWritable.class);
+		job3.setInputFormatClass(SequenceFileInputFormat.class);
+		FileInputFormat.addInputPath(job3, new Path(inter2));
+		FileOutputFormat.setOutputPath(job3, new Path(args[1]));
+		
+		job3.waitForCompletion(true);
+		
 		return 1;
 	}
 	
