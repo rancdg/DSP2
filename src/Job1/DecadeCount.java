@@ -36,42 +36,10 @@ public class DecadeCount {
 	    	
 	    }
 	}
-	 /*
-	public static class ReduceClass extends Reducer<Ngram,NgramValue,Text,IntWritable> {
-		private Text wordOut = new Text(); 
-		@Override
-	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
-	
-			
-			NgramValue previous = new NgramValue();
-			int count = 0;
-			int nDec = 0;
-			String decade = key.getDecade().toString() + "\t";
-			for (NgramValue value : values) {
-				if (value.isFirst())
-					nDec += value.getCount().get();
-				else{
-					if (!value.equals(previous) && count !=0){
-						previous.setCount(count);
-						wordOut.set(decade + previous.getWords() + "\t"+ nDec);
-						context.write(wordOut, previous.getCount());
-						count = 0;
-					}
-					count += value.getCount().get();
-					previous.set(value);
-					
-					
-				}
-			}
-			previous.setCount(count);
-			wordOut.set(decade + previous.getWords() + "\t"+ nDec);
-			context.write(wordOut, previous.getCount());
-	    }
-	}
-	*/
+
 	
 	public static class ReduceClass extends Reducer<Ngram,NgramValue,Ngram,NgramValue> {
-		private Ngram keyToSend;
+		private Ngram keyToSend = new Ngram();
 		@Override
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
 	
@@ -87,7 +55,7 @@ public class DecadeCount {
 						previous.setCount(count);
 						previous.setNdec(nDec);
 						String[] words = previous.getWords().toString().split(" "); 
-						keyToSend = new Ngram(key.getDecade().get(), words[0], words[1], previous.getFirst().get());
+						keyToSend.set(key.getDecade().get(), words[0], words[1], previous.getFirst().get(), 0);
 						context.write(keyToSend, previous);
 						count = 0;
 					}
@@ -100,14 +68,14 @@ public class DecadeCount {
 			previous.setCount(count);
 			previous.setNdec(nDec);
 			String[] words = previous.getWords().toString().split(" "); 
-			keyToSend = new Ngram(key.getDecade().get(), words[0], words[1], previous.getFirst().get());
+			keyToSend.set(key.getDecade().get(), words[0], words[1], previous.getFirst().get(), 0);
 			context.write(keyToSend, previous);
 	    }
 	}
 	
 	
 	public static class NgramCombiner extends Reducer<Ngram,NgramValue,Ngram,NgramValue> {
-		private Ngram keyToSend;
+		private Ngram keyToSend = new Ngram();
 		@Override
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
 			int count = 0;
@@ -116,7 +84,7 @@ public class DecadeCount {
 				if (!value.equals(previous) && count !=0){
 					previous.setCount(count);
 					String[] words = previous.getWords().toString().split(" "); 
-					keyToSend = new Ngram(key.getDecade().get(), words[0], words[1], previous.getFirst().get());
+					keyToSend.set(key.getDecade().get(), words[0], words[1], previous.getFirst().get(), 0);
 					context.write(keyToSend, previous);
 					count = 0;
 				}
@@ -125,7 +93,7 @@ public class DecadeCount {
 			}
 			previous.setCount(count);
 			String[] words = previous.getWords().toString().split(" "); 
-			keyToSend = new Ngram(key.getDecade().get(), words[0], words[1], previous.getFirst().get());
+			keyToSend.set(key.getDecade().get(), words[0], words[1], previous.getFirst().get(), 0);
 			context.write(keyToSend, previous);
 	    }
 	}
