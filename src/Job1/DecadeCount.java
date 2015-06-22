@@ -1,7 +1,6 @@
 package Job1;
 import java.io.IOException;
 
-
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -16,23 +15,45 @@ import NgramGeneral.NgramValue;
 public class DecadeCount {
 	
 	public static class MapClass extends Mapper<LongWritable, Text, Ngram, NgramValue> {
+		
 		private Ngram ngram = new Ngram();
 		private NgramValue ngramValue = new NgramValue();
+		final private String pathEng = "hdfs:/data/StopEnglish";
+		final private String pathHeb = "hdfs:/data/StopHebrew";
+		private StopWords stop = null;
+		
+		
+		@Override
+		protected void setup(Mapper<LongWritable, Text, Ngram, NgramValue>.Context context)throws IOException, InterruptedException {
+			boolean includeStop = context.getConfiguration().getBoolean("stop", true);
+			String path = (context.getConfiguration().get("language", "eng") == "heb"? pathHeb : pathEng);
+			if (!includeStop){
+				
+				stop = new StopWords(path);
+				stop.init();
+			}
+		}
+
+	
 	    
-	    
+		
 	    @Override
 	    public void map(LongWritable key, Text value, Context context) throws IOException,  InterruptedException {
+	    	
+	    	
 	    	String[] data = value.toString().split("\\t");
 	    	String[] words = data[0].split(" ");
 	    	
-	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0, 0);
-	    	int year = Integer.parseInt(data[1]);
-	    	year -= (year % 10);
-	    	ngram.set(year, words[0], words[1], true, 0);
-	    	context.write(ngram, ngramValue); 
-	    	ngram.setNotFirst();
-	    	ngramValue.setNotFirst();
-	    	context.write(ngram, ngramValue); 
+	    	if(stop == null || (!stop.isStop(words[0]) && !stop.isStop(words[1]))){
+		    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0, 0);
+		    	int year = Integer.parseInt(data[1]);
+		    	year -= (year % 10);
+		    	ngram.set(year, words[0], words[1], true, 0);
+		    	context.write(ngram, ngramValue); 
+		    	ngram.setNotFirst();
+		    	ngramValue.setNotFirst();
+		    	context.write(ngram, ngramValue); 
+	    	}
 	    	
 	    }
 	}

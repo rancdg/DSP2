@@ -31,9 +31,10 @@ public class Ncount extends Configured implements Tool  {
 	@Override
 	public int run(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-	    conf.set("mapred.map.tasks","10");
-	    conf.set("mapred.reduce.tasks","10");
-	    
+	    //conf.set("mapred.map.tasks","10");
+	    //conf.set("mapred.reduce.tasks","10");
+	    conf.setBoolean("stop", (Integer.parseInt(args[5]) == 1 ? true : false));
+	    conf.set("language", args[4]);
 	    final String inter = "/inter";
 	    final String inter2 = "/inter2";
 	    final String inter3 = "/inter3";
@@ -59,8 +60,8 @@ public class Ncount extends Configured implements Tool  {
 	    System.out.println("JOB 1 completed");
 	
 	    Configuration conf2 = new Configuration();
-	    conf2.set("mapreduce.job.maps","10");
-        conf2.set("mapreduce.job.reduces","10");
+	    //conf2.set("mapreduce.job.maps","10");
+        //conf2.set("mapreduce.job.reduces","10");
 	    
 		Job job2 = Job.getInstance(conf2, "First word count");
 		job2.setJarByClass(Ncount.class);
@@ -85,8 +86,8 @@ public class Ncount extends Configured implements Tool  {
 		System.out.println("JOB 2 completed");
 		
 		Configuration conf3 = new Configuration();
-	    conf3.set("mapreduce.job.maps","10");
-        conf3.set("mapreduce.job.reduces","10");
+	    //conf3.set("mapreduce.job.maps","10");
+        //conf3.set("mapreduce.job.reduces","10");
 	    
 		Job job3 = Job.getInstance(conf3, "Pmi");
 		job3.setJarByClass(Ncount.class);
@@ -111,8 +112,8 @@ public class Ncount extends Configured implements Tool  {
 		System.out.println("JOB 3 completed");
 		
 		Configuration conf4 = new Configuration();
-	    conf4.set("mapreduce.job.maps","10");
-        conf4.set("mapreduce.job.reduces","10");
+	    //conf4.set("mapreduce.job.maps","10");
+        //conf4.set("mapreduce.job.reduces","10");
 	    
 		conf4.set("minPmi", args[2]);
 		conf4.set("relMinPmi", args[3]);
