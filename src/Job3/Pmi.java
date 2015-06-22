@@ -2,12 +2,10 @@ package Job3;
 
 import java.io.IOException;
 
-import org.apache.hadoop.io.DoubleWritable;
-import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.io.Text;
+
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.apache.hadoop.mapreduce.Mapper.Context;
+
 
 import NgramGeneral.Ngram;
 import NgramGeneral.NgramValue;
@@ -35,9 +33,8 @@ public class Pmi {
 	    }
 	}
 	    
-    public static class ReduceClass extends Reducer<Ngram,NgramValue,Text,DoubleWritable> {
-		private Text wordOut = new Text(); 
-		private DoubleWritable pmi1 = new DoubleWritable();
+    public static class ReduceClass extends Reducer<Ngram,NgramValue,Ngram,NgramValue> {
+    	private Ngram keyToSend = new Ngram();
 		@Override
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
 	
@@ -45,7 +42,6 @@ public class Pmi {
 			int count = 0;
 			double logNdec = 0;
 			
-			String word = key.getDecade().toString() + "\t";
 			for (NgramValue value : values) {
 				if(value.isFirst()){
 					count += value.getCount().get();
@@ -54,12 +50,14 @@ public class Pmi {
 					if (logNdec ==0)
 						logNdec = Math.log(value.getNDec().get());
 					double pmi = (Math.log(value.getCount().get())+ logNdec - Math.log(value.getCW1().get()) - Math.log(count));
-					wordOut.set(word + value.getWords());
-					pmi1.set(pmi);
-					context.write(wordOut, pmi1);
+					value.setPmi(pmi);
+					String[] words = value.getWords().toString().split(" "); 
+					keyToSend.set(key.getDecade().get(), words[0], words[1], value.getFirst().get(),pmi);
+					context.write(keyToSend, value);
 				}
 			}
 			
 	    }
-    }
+    } 
+
 }

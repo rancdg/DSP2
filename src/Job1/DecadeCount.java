@@ -1,7 +1,7 @@
 package Job1;
 import java.io.IOException;
 
-import org.apache.hadoop.io.IntWritable;
+
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -25,10 +25,10 @@ public class DecadeCount {
 	    	String[] data = value.toString().split("\\t");
 	    	String[] words = data[0].split(" ");
 	    	
-	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0);
+	    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0, 0);
 	    	int year = Integer.parseInt(data[1]);
 	    	year -= (year % 10);
-	    	ngram.set(year, words[0], words[1], true);
+	    	ngram.set(year, words[0], words[1], true, 0);
 	    	context.write(ngram, ngramValue); 
 	    	ngram.setNotFirst();
 	    	ngramValue.setNotFirst();

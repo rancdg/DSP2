@@ -5,6 +5,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.io.BooleanWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
@@ -17,30 +18,30 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 	private Text w1;
 	private Text w2;
 	private BooleanWritable first;
-	private BooleanWritable w1First;
+	private DoubleWritable pmi;
 	
 	public Ngram(){
-		set(new IntWritable(0), new Text(""), new Text(""), new BooleanWritable(false));
+		set(new IntWritable(0), new Text(""), new Text(""), new BooleanWritable(false), new DoubleWritable(0));
 	}
 	
 	public Ngram(int decade, String w1, String w2, boolean first){
-		set(new IntWritable(decade), new Text(w1), new Text(w2), new BooleanWritable(first));
+		set(new IntWritable(decade), new Text(w1), new Text(w2), new BooleanWritable(first), new DoubleWritable(0));
 	}
 	
-	public void set(int decade, String w1, String w2, boolean first){
+	public void set(int decade, String w1, String w2, boolean first, double pmi){
 		this.decade.set(decade);
 		this.w1.set(w1);
 		this.w2.set(w2);
 		this.first.set(first);
-		this.w1First = new BooleanWritable(true);
+		this.pmi.set(pmi);
 	}
 	
-	public void set(IntWritable decade, Text w1, Text w2, BooleanWritable first){
+	public void set(IntWritable decade, Text w1, Text w2, BooleanWritable first, DoubleWritable pmi){
 		this.decade = decade;
 		this.w1 = w1;
 		this.w2 = w2;
 		this.first = first;
-		this.w1First = new BooleanWritable(true);
+		this.pmi = pmi;
 	}
 	
 	public void setNotFirst(){
@@ -51,8 +52,8 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 		first.set(true);
 	}
 	
-	public void w2First(){
-		w1First.set(false);
+	public void setPmi(double pmi){
+		this.pmi.set(pmi);
 	}
 	
 	public IntWritable getDecade(){
@@ -75,12 +76,17 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 		return first;
 	}
 	
+	public DoubleWritable getPmi(){
+		return pmi;
+	}
+	
 	@Override
 	public void write(DataOutput out) throws IOException {
 		decade.write(out);
 		w1.write(out);
 		w2.write(out);
 		first.write(out);
+		pmi.write(out);
 	}
 
 	@Override
@@ -89,6 +95,7 @@ public class Ngram implements Writable, WritableComparable<Ngram> {
 		w1.readFields(in);
 		w2.readFields(in);
 		first.readFields(in);
+		pmi.readFields(in);
 		
 	}
 
