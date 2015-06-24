@@ -18,19 +18,23 @@ public class DecadeCount {
 		
 		private Ngram ngram = new Ngram();
 		private NgramValue ngramValue = new NgramValue();
-		final private String pathEng = "hdfs:/data/StopEnglish";
-		final private String pathHeb = "hdfs:/data/StopHebrew";
+		final private String pathEng = "StopEnglish";
+		final private String pathHeb = "StopHebrew";
 		private StopWords stop = null;
 		
 		
 		@Override
 		protected void setup(Mapper<LongWritable, Text, Ngram, NgramValue>.Context context)throws IOException, InterruptedException {
-			boolean includeStop = context.getConfiguration().getBoolean("stop", true);
-			String path = (context.getConfiguration().get("language", "eng") == "heb"? pathHeb : pathEng);
+			System.out.println("here1");
+			boolean includeStop = context.getConfiguration().getBoolean("stop", false);
+			System.out.println("here2");
 			if (!includeStop){
+			String path = (context.getConfiguration().get("language", "eng") == "heb"? pathHeb : pathEng);
+			System.out.println("here3");
 				
 				stop = new StopWords(path);
 				stop.init();
+				System.out.println("here4");
 			}
 		}
 

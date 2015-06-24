@@ -33,7 +33,10 @@ public class Ncount extends Configured implements Tool  {
 		Configuration conf = new Configuration();
 	    //conf.set("mapred.map.tasks","10");
 	    //conf.set("mapred.reduce.tasks","10");
-	    conf.setBoolean("stop", (Integer.parseInt(args[5]) == 1 ? true : false));
+	    int isStop = Integer.parseInt(args[5]);
+	    System.out.println("STOP? " + isStop);
+		conf.setBoolean("stop", (isStop == 1 ? true : false));
+	    
 	    conf.set("language", args[4]);
 	    final String inter = "/inter";
 	    final String inter2 = "/inter2";
