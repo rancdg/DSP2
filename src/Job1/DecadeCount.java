@@ -18,8 +18,8 @@ public class DecadeCount {
 		
 		private Ngram ngram = new Ngram();
 		private NgramValue ngramValue = new NgramValue();
-		final private String pathEng = "hdfs:/data/StopEnglish";
-		final private String pathHeb = "hdfs:/data/StopHebrew";
+		final private String pathEng = "StopEnglish";
+		final private String pathHeb = "StopHebrew";
 		private StopWords stop = null;
 		
 		

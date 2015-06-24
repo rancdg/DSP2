@@ -52,6 +52,7 @@ public class Ncount extends Configured implements Tool  {
 	    job1.setOutputKeyClass(Ngram.class);
 	    job1.setOutputValueClass(NgramValue.class);
 	    job1.setOutputFormatClass(SequenceFileOutputFormat.class);
+	    job1.setInputFormatClass(SequenceFileInputFormat.class);
 	    FileInputFormat.addInputPath(job1, new Path(args[0]));
 	    FileOutputFormat.setOutputPath(job1, new Path(inter));
 	    
