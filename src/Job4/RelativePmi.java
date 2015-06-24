@@ -52,7 +52,7 @@ public class RelativePmi {
 			String word = key.getDecade().toString()+"\t";
 			for (NgramValue value : values) {
 				if(value.isFirst()){
-					count += value.getCount().get();
+					count += value.getPmi().get();
 	
 				}
 				else{
