@@ -49,7 +49,8 @@ public class Pmi {
 				else{
 					if (logNdec ==0)
 						logNdec = Math.log(value.getNDec().get());
-					double pmi = (Math.log(value.getCount().get())+ logNdec - Math.log(value.getCW1().get()) - Math.log(count));
+					double pmi = (Math.log(value.getCount().get())+ logNdec - Math.log(value.getCW1().get()) - Math.log(count))/(-Math.log(value.getCount().get()));
+					
 					value.setPmi(pmi);
 					String[] words = value.getWords().toString().split(" "); 
 					keyToSend.set(key.getDecade().get(), words[0], words[1], value.getFirst().get(),pmi);
