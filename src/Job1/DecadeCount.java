@@ -44,17 +44,18 @@ public class DecadeCount {
 	    	String[] data = value.toString().split("\\t");
 	    	String[] words = data[0].split(" ");
 	    	
-	    	if(stop == null || (!stop.isStop(words[0]) && !stop.isStop(words[1]))){
-		    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0, 0);
-		    	int year = Integer.parseInt(data[1]);
-		    	year -= (year % 10);
-		    	ngram.set(year, words[0], words[1], true, 0);
-		    	context.write(ngram, ngramValue); 
-		    	ngram.setNotFirst();
-		    	ngramValue.setNotFirst();
-		    	context.write(ngram, ngramValue); 
+	    	if(words.length == 2){
+		    	if(stop == null || (!stop.isStop(words[0]) && !stop.isStop(words[1]))){
+			    	ngramValue.set(words[0]+ " " + words[1], true, Integer.parseInt(data[2]), 0, 0, 0);
+			    	int year = Integer.parseInt(data[1]);
+			    	year -= (year % 10);
+			    	ngram.set(year, words[0], words[1], true, 0);
+			    	context.write(ngram, ngramValue); 
+			    	ngram.setNotFirst();
+			    	ngramValue.setNotFirst();
+			    	context.write(ngram, ngramValue); 
+		    	}
 	    	}
-	    	
 	    }
 	}
 

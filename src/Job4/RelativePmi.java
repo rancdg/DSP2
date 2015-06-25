@@ -42,7 +42,7 @@ public class RelativePmi {
 	    public void reduce(Ngram key, Iterable<NgramValue> values, Context context) throws IOException,  InterruptedException {
 	
 			
-			int count = 0;
+			double count = 0;
 			double relPmi = 0;
 			
 
@@ -53,7 +53,7 @@ public class RelativePmi {
 			for (NgramValue value : values) {
 				if(value.isFirst()){
 					count += value.getPmi().get();
-	
+			
 				}
 				else{
 					relPmi = value.getPmi().get() / (double)count;
